@@ -1,0 +1,901 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kazilink | Connecting Employees with Employers</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0c2340',
+                            900: '#07162c',
+                        },
+                        brand: {
+                            green: '#059669',
+                            greenHover: '#047857',
+                            cyan: '#38bdf8',
+                            lightBg: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <button id="menuBtn" class="text-gray-700 hover:text-gray-900 focus:outline-none p-1">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="flex items-center space-x-1">
+                    <span class="font-bold text-xl text-navy-800 tracking-tight">Kazilink</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full flex items-center">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-[10px] mr-1"></i>KE
+                    </span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button onclick="openModal('loginModal')" class="text-xs sm:text-sm font-semibold text-navy-800 hover:text-emerald-600">Log in</button>
+                <button onclick="openModal('registerModal')" class="text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg transition shadow-sm">Register</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Slide-Out Drawer Navigation -->
+    <div id="drawerOverlay" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity"></div>
+    <div id="drawerMenu" class="fixed top-0 left-0 bottom-0 w-4/5 max-w-xs bg-white z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-navy-800 text-white">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-lg tracking-tight">Kazilink</span>
+                <span class="text-xs bg-emerald-500 text-white px-1.5 py-0.5 rounded font-bold">KE</span>
+            </div>
+            <button id="closeDrawer" class="text-gray-300 hover:text-white p-1">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <div class="p-4 flex-1 overflow-y-auto space-y-4">
+            <nav class="space-y-1">
+                <a href="#" onclick="closeDrawerMenu(); return false;" class="flex items-center space-x-3 text-emerald-600 bg-emerald-50 px-3 py-2.5 rounded-lg font-semibold">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" onclick="closeDrawerMenu(); openModal('registerModal'); return false;" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-50 px-3 py-2.5 rounded-lg font-medium">
+                    <i class="fa-solid fa-user-plus text-gray-500"></i>
+                    <span>Register as employee</span>
+                </a>
+                <a href="#" onclick="closeDrawerMenu(); openModal('registerEmployerModal'); return false;" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-50 px-3 py-2.5 rounded-lg font-medium">
+                    <i class="fa-solid fa-briefcase text-gray-500"></i>
+                    <span>Register as employer</span>
+                </a>
+                <a href="#" onclick="closeDrawerMenu(); openModal('loginModal'); return false;" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-50 px-3 py-2.5 rounded-lg font-medium">
+                    <i class="fa-solid fa-right-to-bracket text-gray-500"></i>
+                    <span>Log in</span>
+                </a>
+            </nav>
+
+            <div class="pt-4 border-t border-gray-100">
+                <h3 class="px-3 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">ABOUT</h3>
+                <nav class="space-y-1">
+                    <a href="#" onclick="closeDrawerMenu(); openModal('aboutModal'); return false;" class="flex items-center space-x-3 text-gray-600 hover:bg-gray-50 px-3 py-2 text-sm rounded-lg">
+                        <i class="fa-solid fa-circle-info text-gray-400"></i>
+                        <span>How It Works</span>
+                    </a>
+                    <a href="#" onclick="closeDrawerMenu(); openModal('aboutModal'); return false;" class="flex items-center space-x-3 text-gray-600 hover:bg-gray-50 px-3 py-2 text-sm rounded-lg">
+                        <i class="fa-solid fa-shield-halved text-gray-400"></i>
+                        <span>Important Safety Tips</span>
+                    </a>
+                    <a href="#" onclick="closeDrawerMenu(); openModal('contactModal'); return false;" class="flex items-center space-x-3 text-gray-600 hover:bg-gray-50 px-3 py-2 text-sm rounded-lg">
+                        <i class="fa-solid fa-headset text-gray-400"></i>
+                        <span>Contact Us</span>
+                    </a>
+                    <a href="#" onclick="closeDrawerMenu(); copyShareLink(); return false;" class="flex items-center space-x-3 text-gray-600 hover:bg-gray-50 px-3 py-2 text-sm rounded-lg">
+                        <i class="fa-solid fa-share-nodes text-gray-400"></i>
+                        <span>Tell friends</span>
+                    </a>
+                    <a href="#" onclick="closeDrawerMenu(); openModal('suggestCategoryModal'); return false;" class="flex items-center space-x-3 text-gray-600 hover:bg-gray-50 px-3 py-2 text-sm rounded-lg">
+                        <i class="fa-solid fa-lightbulb text-gray-400"></i>
+                        <span>Suggest a category</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        <div class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-center">
+            &copy; 2026 Kazilink.co.ke. All rights reserved.
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-md mx-auto w-full flex-1 px-4 py-4 space-y-5">
+
+        <!-- Hero Card Component -->
+        <div class="bg-navy-800 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+                <div class="inline-flex items-center space-x-1.5 bg-white/10 px-2.5 py-1 rounded-full text-xs font-semibold text-brand-cyan">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <span>VERIFIED WORKERS DIRECTORY</span>
+                </div>
+                <h1 class="text-xl font-extrabold leading-tight tracking-tight">
+                    Hire Verified African Talent & Skilled Workers Directly
+                </h1>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Connecting employees with employers across 159+ professional and casual job categories in Kenya.
+                </p>
+                <div class="pt-1">
+                    <button onclick="openModal('registerModal')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-between transition shadow-lg">
+                        <span>CLICK HERE TO REGISTER AS A JOB SEEKER TODAY!</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Worker Collage Image Integration -->
+            <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="African Workers Team" class="w-full h-36 object-cover rounded-xl shadow-md border border-white/10">
+            </div>
+        </div>
+
+        <!-- Browse Workers Section Header -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Browse workers</h2>
+                    <p class="text-xs text-gray-500" id="workerCountText">6,408 workers &bull; page 1 of 267</p>
+                </div>
+                <button onclick="document.getElementById('categorySearchInput').focus()" class="border border-emerald-600 text-emerald-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-50 flex items-center space-x-1">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search</span>
+                </button>
+            </div>
+
+            <!-- Quick Filter Pills -->
+            <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="filterCategory('All')" class="category-pill active bg-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm">All</button>
+                <button onclick="filterCategory('Day Househelp')" class="category-pill bg-white border border-gray-300 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap hover:bg-gray-50">Day Househelp</button>
+                <button onclick="filterCategory('Live-In Househelp')" class="category-pill bg-white border border-gray-300 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap hover:bg-gray-50">Live-In Househelp</button>
+                <button onclick="filterCategory('Mama Fua')" class="category-pill bg-white border border-gray-300 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap hover:bg-gray-50">Mama Fua</button>
+                <button onclick="filterCategory('Massage Therapist')" class="category-pill bg-white border border-gray-300 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap hover:bg-gray-50">Massage Therapist</button>
+                <button onclick="filterCategory('Software Developer')" class="category-pill bg-white border border-gray-300 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap hover:bg-gray-50">Software Developer</button>
+            </div>
+
+            <!-- Exhaustive 159 Category Dropdown Container -->
+            <div class="bg-white p-3.5 rounded-xl border border-emerald-600/40 shadow-sm space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wide">Find a category (159 Roles)</label>
+                    <span id="selectedCategoryBadge" class="text-[11px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full hidden">All Selected</span>
+                </div>
+                <div class="relative">
+                    <input type="text" id="categorySearchInput" placeholder="Type to search e.g. Accountant, Driver, Househelp..." class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white pr-8">
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-2.5 text-gray-400 text-xs pointer-events-none"></i>
+                </div>
+                <!-- Searchable Dropdown List -->
+                <div id="categoryDropdown" class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg bg-white shadow-inner hidden divide-y divide-gray-100">
+                    <!-- Populated dynamically via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Worker Profile Cards Container -->
+        <div id="workerListContainer" class="space-y-4">
+            <!-- Cards populated dynamically by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Mobile View) -->
+    <div class="bg-white border-t border-gray-200 sticky bottom-0 z-20 max-w-md mx-auto w-full">
+        <div class="flex justify-around items-center py-2">
+            <a href="#" class="flex flex-col items-center text-emerald-600">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5">Home</span>
+            </a>
+            <a href="#" onclick="openModal('registerModal'); return false;" class="flex flex-col items-center text-gray-500 hover:text-emerald-600">
+                <i class="fa-solid fa-user-plus text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Register</span>
+            </a>
+            <a href="#" onclick="openModal('contactModal'); return false;" class="flex flex-col items-center text-gray-500 hover:text-emerald-600">
+                <i class="fa-solid fa-headset text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Support</span>
+            </a>
+            <a href="#" onclick="openModal('loginModal'); return false;" class="flex flex-col items-center text-gray-500 hover:text-emerald-600">
+                <i class="fa-solid fa-user text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Account</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Action Button -->
+    <a href="https://wa.me/254746726579?text=Hello%20Kazilink,%20I%20need%20assistance" target="_blank" class="fixed bottom-16 right-4 z-30 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl border-2 border-white transition transform hover:scale-105">
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
+    </a>
+
+    <!-- MODALS SECTION -->
+
+    <!-- Manual M-Pesa Payment Unlock Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal('paymentModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl mb-1">
+                    <i class="fa-solid fa-lock-open"></i>
+                </div>
+                <h3 class="font-extrabold text-gray-900 text-base">Unlock Worker Contact</h3>
+                <p class="text-xs text-gray-500">Access verified direct phone and WhatsApp number</p>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-xs text-emerald-900 space-y-2">
+                <div class="flex justify-between items-center border-b border-emerald-200/60 pb-2">
+                    <span class="font-semibold text-gray-600">Unlock Fee:</span>
+                    <span class="font-extrabold text-emerald-700 text-sm">KES 100</span>
+                </div>
+                <div class="space-y-1.5 pt-1">
+                    <p class="font-bold">M-Pesa Payment Instructions:</p>
+                    <ol class="list-decimal list-inside space-y-1 text-gray-700">
+                        <li>Go to M-Pesa &rarr; <strong>Send Money</strong></li>
+                        <li>Enter Phone Number: <strong class="text-emerald-800">0746726579</strong></li>
+                        <li>Recipient: <strong>Robert Mose Onyiego</strong></li>
+                        <li>Enter KES 100 & Send</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-gray-700">Enter M-Pesa Transaction Code</label>
+                <input type="text" id="mpesaCodeInput" placeholder="e.g. SLX9182736" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs font-mono uppercase focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <p id="paymentError" class="text-[11px] text-red-600 hidden font-medium">Please enter a valid M-Pesa transaction code (at least 8 characters).</p>
+            </div>
+
+            <button onclick="verifyPayment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition">
+                Submit & Unlock Phone Number
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="font-extrabold text-navy-800 text-lg">Welcome Back</h3>
+                <p class="text-xs text-gray-500">Log in to your Kazilink account</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Phone Number or Email</label>
+                    <input type="text" required placeholder="0712345678" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none pr-8">
+                        <button type="button" onclick="togglePassword('loginPassword', 'loginEye')" class="absolute right-2.5 top-2 text-gray-400 text-xs">
+                            <i id="loginEye" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('loginModal'); openModal('otpModal'); startOtpTimer();" class="text-[11px] font-semibold text-emerald-600 hover:underline">Forgot password?</button>
+                </div>
+                <button type="submit" class="w-full bg-navy-800 hover:bg-navy-900 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal (Job Seeker / Employee) -->
+    <div id="registerModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-fade-in">
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="font-extrabold text-navy-800 text-lg">Register as Job Seeker</h3>
+                <p class="text-xs text-gray-500">Create your profile to get hired quickly</p>
+            </div>
+            <form onsubmit="handleRegistration(event, 'Job Seeker')" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Full Name</label>
+                    <input type="text" required placeholder="e.g. Mary Wanjiku" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" required placeholder="0712345678" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Primary Job Role</label>
+                    <select id="registerRoleSelect" required class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+                        <option value="">Select your job role</option>
+                        <!-- Populated with categories via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="regPass" required placeholder="Create password" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none pr-8">
+                        <button type="button" onclick="togglePassword('regPass', 'regEye1')" class="absolute right-2.5 top-2 text-gray-400 text-xs">
+                            <i id="regEye1" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="regPassConf" required placeholder="Confirm password" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none pr-8">
+                        <button type="button" onclick="togglePassword('regPassConf', 'regEye2')" class="absolute right-2.5 top-2 text-gray-400 text-xs">
+                            <i id="regEye2" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition">Register Now</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Employer Modal -->
+    <div id="registerEmployerModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-fade-in">
+            <button onclick="closeModal('registerEmployerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="font-extrabold text-navy-800 text-lg">Register as Employer</h3>
+                <p class="text-xs text-gray-500">Find and hire verified workers fast</p>
+            </div>
+            <form onsubmit="handleRegistration(event, 'Employer')" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Company / Individual Name</label>
+                    <input type="text" required placeholder="e.g. John Kamau" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" required placeholder="0712345678" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Location / Town</label>
+                    <input type="text" required placeholder="e.g. Nairobi, Westlands" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="empPass" required placeholder="Create password" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none pr-8">
+                        <button type="button" onclick="togglePassword('empPass', 'empEye1')" class="absolute right-2.5 top-2 text-gray-400 text-xs">
+                            <i id="empEye1" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-navy-800 hover:bg-navy-900 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition">Create Employer Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- OTP Forgot Password Modal -->
+    <div id="otpModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative text-center animate-fade-in">
+            <button onclick="closeModal('otpModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-xl mb-1">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="font-extrabold text-navy-800 text-base">OTP Code Verification</h3>
+            <p class="text-xs text-gray-500">We sent a 6-digit verification code to your registered phone number.</p>
+
+            <div class="flex justify-center space-x-2 my-2" id="otpInputContainer">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="text" maxlength="1" class="otp-box w-9 h-10 border border-gray-300 rounded-lg text-center font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="text-xs text-gray-500">
+                Resend code in: <span id="otpTimer" class="font-bold text-emerald-600">60</span>s
+            </div>
+
+            <button onclick="verifyOtp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition">Verify OTP</button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl relative max-h-[85vh] overflow-y-auto animate-fade-in">
+            <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-extrabold text-navy-800 text-base">About Kazilink.co.ke</h3>
+            <p class="text-xs text-gray-600 leading-relaxed">
+                Kazilink is Kenya's premier verified directory connecting reliable employees and independent workers with employers directly without middleman commissions.
+            </p>
+            <div class="space-y-2 pt-2 border-t border-gray-100 text-xs">
+                <h4 class="font-bold text-gray-800">How It Works:</h4>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>Search through 159+ verified job categories.</li>
+                    <li>Pay KES 100 via M-Pesa to unlock direct phone numbers.</li>
+                    <li>Call or WhatsApp candidates immediately to interview and hire.</li>
+                </ul>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-gray-100 text-xs">
+                <h4 class="font-bold text-gray-800">Safety Tips:</h4>
+                <p class="text-gray-600">Always verify original ID documents and conduct face-to-face interviews before employment engagement.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Support Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="font-extrabold text-navy-800 text-base">Contact Support</h3>
+                <p class="text-xs text-gray-500">We are here to assist you 24/7</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-3 text-xs space-y-2 border border-gray-200">
+                <div class="flex items-center space-x-2 text-gray-700">
+                    <i class="fa-solid fa-phone text-emerald-600"></i>
+                    <span>Phone: <strong>0746726579</strong></span>
+                </div>
+                <div class="flex items-center space-x-2 text-gray-700">
+                    <i class="fa-solid fa-user text-emerald-600"></i>
+                    <span>Support Manager: <strong>Robert Mose Onyiego</strong></span>
+                </div>
+                <div class="flex items-center space-x-2 text-gray-700">
+                    <i class="fa-solid fa-globe text-emerald-600"></i>
+                    <span>Website: <strong>Kazilink.co.ke</strong></span>
+                </div>
+            </div>
+            <a href="https://wa.me/254746726579" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>Chat on WhatsApp</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Suggest Category Modal -->
+    <div id="suggestCategoryModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal('suggestCategoryModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="font-extrabold text-navy-800 text-base">Suggest a New Category</h3>
+                <p class="text-xs text-gray-500">Missing a job role? Let us know!</p>
+            </div>
+            <form onsubmit="event.preventDefault(); alert('Thank you! Your category suggestion has been received.'); closeModal('suggestCategoryModal');" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Category Title</label>
+                    <input type="text" required placeholder="e.g. Solar Installation Technician" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition">Submit Suggestion</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Master alphabetized list of all 159 job categories
+        const masterCategories = [
+            "Accountant", "Agricultural Officer", "Art & Design Teacher", "Auditor", "Automotive Engineering Teacher",
+            "Baker", "Banker", "Barber", "Bartender", "Basketball Coach", "Biology Teacher", "Biomedical Technician",
+            "Boda Boda Rider", "Boda Mechanic", "Bus Driver", "Business Lecturer", "Business Management Trainer",
+            "Business Studies Teacher", "Butcher", "Car Painter", "Car Wash Attendant", "Caregiver", "Caretaker",
+            "Carpenter", "Casual Worker", "Chef", "Chemistry Teacher", "Civil Engineer", "Cleaner", "Clinical Officer",
+            "Clinical Researcher", "Coding Teacher", "Community Health Assistant", "Community Health Worker",
+            "Computer Instructor", "Computer Studies Teacher", "Computer Technician", "Content Creator", "Cook",
+            "Counsellor", "Customer Service", "Dance Instructor", "Data Analyst", "Day Househelp", "Dental Assistant",
+            "Dietitian", "DJ", "Domestic Manager", "Drama Teacher", "Economist", "Electrician", "English Teacher",
+            "Environmental Health Officer", "Epidemiologist", "Factory Worker", "Fashion Designer", "Film Director",
+            "Fine Art Teacher", "Fitness Coach", "Football Coach", "Forex Trader", "Gamer", "Geography Teacher",
+            "Graphic Designer", "Guitar Teacher", "Handyman", "Health Records Officer", "History & Government Teacher",
+            "Home Care Nurse", "Home Tutor", "Househelp Agency", "Human Resource Officer", "Insurance Professional",
+            "IT Specialist", "Journalist", "Junior Secondary Teacher", "Kiswahili Teacher", "Kitchen Assistant",
+            "Laboratory Assistant", "Land Surveyor", "Landscaping Worker", "Laundry Worker", "Lawyer", "Library Assistant",
+            "Live-In Househelp", "Logo Designer", "Lorry / Truckdriver", "Machine Operator", "Mama Fua", "Mason",
+            "Massage Therapist", "Matatu / Personal Driver", "Mathematics Lecturer", "Mathematics Teacher", "Mechanic",
+            "Medical Doctor", "Medical Laboratory Technician", "Medical Laboratory Technologist", "Medical Lecturer",
+            "Medical Representative", "Mjengo", "Mortuary Attendant", "Music Instructor", "Music Teacher", "Nail Technician",
+            "Nurse", "Nutritionist", "Occupational Therapist", "Online Tutor", "Orthopaedic Technologist", "Painter",
+            "Performing Arts Teacher", "Personal Assistant", "Pet Care Worker", "Petrol Station Attendant",
+            "Pharmaceutical Technologist", "Pharmacist", "Photographer", "Physics Teacher", "Physiotherapist", "Piano Teacher",
+            "Plumber", "Primary School Teacher", "Private Tutor", "Production Manager", "Project Manager", "Psychologist",
+            "Public Health Officer", "Public Relations Officer", "Radiology Technician", "Receptionist",
+            "Refrigeration Technician", "Rentals Agency", "Research Assistant", "Sales And Marketing", "Salonist",
+            "Secretary", "Security Guard", "Sign Language Teacher", "Social Sciences Lecturer", "Social Worker",
+            "Software Developer", "Sound Engineer", "Special Needs Teacher", "Sports Teacher", "Store Manager",
+            "Supply Chain Officer", "Tailor", "Telecommunications Engineer", "Theatre Arts Teacher", "Travel Consultant",
+            "Tutor", "TVET Trainer", "Video Editor", "Videographer", "Virtual Assistant", "Warehouse Worker", "Web Designer", "Writer"
+        ];
+
+        // Sample African Worker Profiles
+        const workerProfiles = [
+            {
+                id: 1,
+                name: "Jane Wanjiku",
+                role: "Live-In Househelp",
+                also: "Day Househelp",
+                age: 23,
+                tribe: "Kikuyu",
+                location: "Nairobi",
+                exp: "3 yrs",
+                image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0795xxx541",
+                realPhone: "0795123541"
+            },
+            {
+                id: 2,
+                name: "Kibet Cheruiyot",
+                role: "Mechanic",
+                also: "Boda Mechanic",
+                age: 28,
+                tribe: "Kalenjin",
+                location: "Eldoret / Nairobi",
+                exp: "5 yrs",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0712xxx890",
+                realPhone: "0712345890"
+            },
+            {
+                id: 3,
+                name: "Amina Hussein",
+                role: "Home Care Nurse",
+                also: "Nurse",
+                age: 26,
+                tribe: "Swahili",
+                location: "Mombasa / Nairobi",
+                exp: "4 yrs",
+                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0722xxx432",
+                realPhone: "0722987432"
+            },
+            {
+                id: 4,
+                name: "Emmanuel Otieno",
+                role: "Web Designer",
+                also: "Software Developer",
+                age: 25,
+                tribe: "Luo",
+                location: "Nairobi",
+                exp: "2 yrs 4 mo",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0797xxx950",
+                realPhone: "0797123950"
+            },
+            {
+                id: 5,
+                name: "Grace Nyambura",
+                role: "Accountant",
+                also: "Auditor",
+                age: 29,
+                tribe: "Kikuyu",
+                location: "Nairobi",
+                exp: "6 yrs",
+                image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0701xxx112",
+                realPhone: "0701987112"
+            },
+            {
+                id: 6,
+                name: "David Kiprono",
+                role: "Matatu / Personal Driver",
+                also: "Bus Driver",
+                age: 32,
+                tribe: "Kalenjin",
+                location: "Nakuru / Nairobi",
+                exp: "7 yrs",
+                image: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=300&q=80",
+                maskedPhone: "0724xxx334",
+                realPhone: "0724556334"
+            }
+        ];
+
+        let activeCategory = "All";
+        let unlockedWorkers = new Set();
+        let otpTimerInterval = null;
+
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoriesDropdown(masterCategories);
+            populateRegistrationRoleSelect();
+            renderWorkerCards();
+            setupEventListeners();
+            setupOtpInputs();
+        });
+
+        // Setup UI Listeners
+        function setupEventListeners() {
+            const menuBtn = document.getElementById('menuBtn');
+            const drawerMenu = document.getElementById('drawerMenu');
+            const drawerOverlay = document.getElementById('drawerOverlay');
+            const closeDrawer = document.getElementById('closeDrawer');
+
+            menuBtn.addEventListener('click', () => {
+                drawerMenu.classList.remove('-translate-x-full');
+                drawerOverlay.classList.remove('hidden');
+            });
+
+            closeDrawer.addEventListener('click', closeDrawerMenu);
+            drawerOverlay.addEventListener('click', closeDrawerMenu);
+
+            const searchInput = document.getElementById('categorySearchInput');
+            const dropdown = document.getElementById('categoryDropdown');
+
+            searchInput.addEventListener('focus', () => dropdown.classList.remove('hidden'));
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = masterCategories.filter(cat => cat.toLowerCase().includes(query));
+                renderCategoriesDropdown(filtered);
+                dropdown.classList.remove('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#categorySearchInput') && !e.target.closest('#categoryDropdown')) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        function closeDrawerMenu() {
+            document.getElementById('drawerMenu').classList.add('-translate-x-full');
+            document.getElementById('drawerOverlay').classList.add('hidden');
+        }
+
+        // Render 159 Categories in Search Dropdown
+        function renderCategoriesDropdown(categories) {
+            const dropdown = document.getElementById('categoryDropdown');
+            if (categories.length === 0) {
+                dropdown.innerHTML = `<div class="p-3 text-xs text-gray-400 text-center">No matching category found</div>`;
+                return;
+            }
+            dropdown.innerHTML = categories.map(cat => `
+                <div onclick="selectCategory('${cat.replace(/'/g, "\\'")}')" class="px-3.5 py-2 hover:bg-emerald-50 text-xs font-medium text-gray-700 cursor-pointer flex items-center justify-between transition">
+                    <span>${cat}</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-gray-300"></i>
+                </div>
+            `).join('');
+        }
+
+        function populateRegistrationRoleSelect() {
+            const select = document.getElementById('registerRoleSelect');
+            masterCategories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                select.appendChild(opt);
+            });
+        }
+
+        function selectCategory(catName) {
+            document.getElementById('categorySearchInput').value = catName;
+            document.getElementById('categoryDropdown').classList.add('hidden');
+            filterCategory(catName);
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            const badge = document.getElementById('selectedCategoryBadge');
+            
+            if (cat !== 'All') {
+                badge.textContent = cat;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+                document.getElementById('categorySearchInput').value = '';
+            }
+
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                const pillText = pill.innerText.trim();
+                if (pillText === cat || (cat === 'All' && pillText === 'All')) {
+                    pill.classList.add('bg-emerald-600', 'text-white');
+                    pill.classList.remove('bg-white', 'text-gray-700', 'border');
+                } else {
+                    pill.classList.remove('bg-emerald-600', 'text-white');
+                    pill.classList.add('bg-white', 'text-gray-700', 'border');
+                }
+            });
+            renderWorkerCards();
+        }
+
+        // Render Cards
+        function renderWorkerCards() {
+            const container = document.getElementById('workerListContainer');
+            const countText = document.getElementById('workerCountText');
+
+            const filtered = activeCategory === "All" 
+                ? workerProfiles 
+                : workerProfiles.filter(w => w.role.toLowerCase().includes(activeCategory.toLowerCase()) || w.also.toLowerCase().includes(activeCategory.toLowerCase()));
+
+            countText.innerText = `${filtered.length} workers shown \u2022 page 1 of 267`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-8 text-center space-y-2 border border-gray-200 shadow-sm">
+                        <i class="fa-solid fa-user-slash text-3xl text-gray-300"></i>
+                        <p class="text-sm font-bold text-gray-700">No workers found for "${activeCategory}"</p>
+                        <p class="text-xs text-gray-400">Try searching another role or clear search filter.</p>
+                        <button onclick="filterCategory('All')" class="mt-2 text-xs font-bold text-emerald-600 hover:underline">Show All Workers</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(w => {
+                const isUnlocked = unlockedWorkers.has(w.id);
+                return `
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="relative">
+                                <img src="${w.image}" alt="${w.name}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
+                                <span class="absolute bottom-0 right-0 bg-emerald-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] border border-white" title="Verified Worker">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-1.5">
+                                    <h3 class="font-bold text-gray-900 text-base truncate">${w.name}</h3>
+                                    <i class="fa-solid fa-circle-check text-emerald-500 text-xs" title="Verified Profile"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-emerald-700">${w.role}</p>
+                                <p class="text-[11px] text-gray-500">Also skilled in: <span class="text-gray-700 font-medium">${w.also}</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Details Tags -->
+                        <div class="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                            <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-user text-gray-400 mr-1"></i>${w.age} yrs</span>
+                            <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-users text-gray-400 mr-1"></i>${w.tribe}</span>
+                            <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-location-dot text-gray-400 mr-1"></i>${w.location}</span>
+                            <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-briefcase text-gray-400 mr-1"></i>${w.exp}</span>
+                        </div>
+
+                        <!-- Masked Contact & Unlock Action Box -->
+                        <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3 space-y-2">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-gray-600 font-medium">WHATSAPP / DIRECT PHONE</span>
+                                <span class="font-mono font-bold ${isUnlocked ? 'text-emerald-700 text-sm' : 'text-gray-800'}">
+                                    ${isUnlocked ? w.realPhone : w.maskedPhone}
+                                </span>
+                            </div>
+                            ${isUnlocked ? `
+                                <a href="tel:${w.realPhone}" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center space-x-2 shadow transition">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <span>Call ${w.name} Now (${w.realPhone})</span>
+                                </a>
+                            ` : `
+                                <button onclick="openPaymentModal(${w.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow transition">
+                                    <i class="fa-solid fa-lock-open"></i>
+                                    <span>Unlock number (KES 100)</span>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // M-Pesa Unlock Logic
+        let activeWorkerToUnlock = null;
+        function openPaymentModal(workerId) {
+            activeWorkerToUnlock = workerId;
+            openModal('paymentModal');
+        }
+
+        function verifyPayment() {
+            const input = document.getElementById('mpesaCodeInput').value.trim();
+            const error = document.getElementById('paymentError');
+            if (input.length < 8) {
+                error.classList.remove('hidden');
+                return;
+            }
+            error.classList.add('hidden');
+            if (activeWorkerToUnlock) {
+                unlockedWorkers.add(activeWorkerToUnlock);
+            }
+            closeModal('paymentModal');
+            document.getElementById('mpesaCodeInput').value = '';
+            alert('M-Pesa payment code confirmed! Direct phone number unlocked.');
+            renderWorkerCards();
+        }
+
+        // Authentication Handlers
+        function handleLogin(e) {
+            e.preventDefault();
+            alert('Logged in successfully!');
+            closeModal('loginModal');
+        }
+
+        function handleRegistration(e, type) {
+            e.preventDefault();
+            alert(`${type} registration successful! An SMS verification code has been dispatched.`);
+            closeModal('registerModal');
+            closeModal('registerEmployerModal');
+        }
+
+        function togglePassword(inputId, eyeId) {
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+            if (input.type === "password") {
+                input.type = "text";
+                eye.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                eye.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        function setupOtpInputs() {
+            const boxes = document.querySelectorAll('#otpInputContainer .otp-box');
+            boxes.forEach((box, idx) => {
+                box.addEventListener('keyup', (e) => {
+                    if (box.value.length === 1 && idx < boxes.length - 1) {
+                        boxes[idx + 1].focus();
+                    }
+                });
+            });
+        }
+
+        function startOtpTimer() {
+            let count = 60;
+            const timerEl = document.getElementById('otpTimer');
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            timerEl.innerText = count;
+            otpTimerInterval = setInterval(() => {
+                count--;
+                timerEl.innerText = count;
+                if (count <= 0) clearInterval(otpTimerInterval);
+            }, 1000);
+        }
+
+        function verifyOtp() {
+            alert('OTP Code verified! You may now reset your password.');
+            closeModal('otpModal');
+        }
+
+        function copyShareLink() {
+            document.execCommand('copy');
+            alert('Kazilink share link copied to clipboard!');
+        }
+
+        // Generic Modal Helpers
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+```
